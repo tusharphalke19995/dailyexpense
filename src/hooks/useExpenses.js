@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
-import { supabase } from '../lib/supabase'
+import { supabase, isLocalMode } from '../lib/supabase'
 import { useAuth } from '../contexts/AuthContext'
+import * as localStore from '../lib/localStore'
 
 export function useExpenses() {
   const { user } = useAuth()
@@ -9,6 +10,12 @@ export function useExpenses() {
   const [error, setError] = useState(null)
 
   const fetchExpenses = useCallback(async () => {
+    if (isLocalMode) {
+      setExpenses(localStore.loadExpenses())
+      setLoading(false)
+      return
+    }
+
     if (!user || !supabase) {
       setExpenses([])
       setLoading(false)
@@ -37,6 +44,12 @@ export function useExpenses() {
   }, [fetchExpenses])
 
   const addExpense = async (expense) => {
+    if (isLocalMode) {
+      const data = localStore.createExpense(expense)
+      setExpenses((prev) => [data, ...prev])
+      return data
+    }
+
     const { data, error: insertError } = await supabase
       .from('expenses')
       .insert({ ...expense, user_id: user.id })
@@ -49,6 +62,12 @@ export function useExpenses() {
   }
 
   const updateExpense = async (id, updates) => {
+    if (isLocalMode) {
+      const data = localStore.updateExpense(id, updates)
+      setExpenses((prev) => prev.map((e) => (e.id === id ? data : e)))
+      return data
+    }
+
     const { data, error: updateError } = await supabase
       .from('expenses')
       .update(updates)
@@ -63,6 +82,12 @@ export function useExpenses() {
   }
 
   const deleteExpense = async (id) => {
+    if (isLocalMode) {
+      localStore.deleteExpense(id)
+      setExpenses((prev) => prev.filter((e) => e.id !== id))
+      return
+    }
+
     const { error: deleteError } = await supabase
       .from('expenses')
       .delete()

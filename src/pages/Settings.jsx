@@ -1,13 +1,17 @@
-import { Moon, Sun, LogOut, Bell, Target } from 'lucide-react'
+import { Moon, Sun, LogOut, Bell, Target, HardDrive, Download } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 import { useTheme } from '../contexts/ThemeContext'
 import { useSettings } from '../contexts/SettingsContext'
+import { useExpenses } from '../hooks/useExpenses'
+import { useFamilyTransactions } from '../hooks/useFamilyTransactions'
 import { ALL_CATEGORIES, RECURRING_BILL_OPTIONS } from '../lib/constants'
 import { Card, PageHeader, Button, Input } from '../components/ui'
 
 export default function Settings() {
-  const { user, signOut } = useAuth()
+  const { user, signOut, isLocalMode } = useAuth()
+  const { expenses } = useExpenses()
+  const { transactions } = useFamilyTransactions()
   const { theme, toggleTheme } = useTheme()
   const { settings, updateSettings, updateCategoryBudget, toggleRecurringReminder } = useSettings()
   const navigate = useNavigate()
@@ -17,6 +21,20 @@ export default function Settings() {
     navigate('/login')
   }
 
+  const handleBackup = () => {
+    const backup = {
+      exportedAt: new Date().toISOString(),
+      expenses,
+      familyTransactions: transactions,
+    }
+    const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' })
+    const link = document.createElement('a')
+    link.href = URL.createObjectURL(blob)
+    link.download = `dailyexpense-backup-${new Date().toISOString().split('T')[0]}.json`
+    link.click()
+    URL.revokeObjectURL(link.href)
+  }
+
   return (
     <div>
       <PageHeader title="Settings" subtitle="Profile & preferences" />
@@ -24,11 +42,28 @@ export default function Settings() {
       <div className="space-y-4">
         <Card>
           <h2 className="mb-3 font-semibold">Profile</h2>
-          <p className="text-sm text-slate-500 dark:text-slate-400">Signed in as</p>
-          <p className="font-medium">{user?.email}</p>
-          <Button variant="danger" size="sm" className="mt-3" onClick={handleSignOut}>
-            <LogOut className="h-4 w-4" /> Sign Out
-          </Button>
+          {isLocalMode ? (
+            <>
+              <div className="flex items-center gap-2 text-sm text-green-600 dark:text-green-400">
+                <HardDrive className="h-4 w-4" />
+                Offline mode — data saved on this device
+              </div>
+              <p className="mt-2 text-xs text-slate-500 dark:text-slate-400">
+                Free, private, no account. Clear browser data will delete expenses.
+              </p>
+              <Button variant="secondary" size="sm" className="mt-3" onClick={handleBackup}>
+                <Download className="h-4 w-4" /> Backup Data (JSON)
+              </Button>
+            </>
+          ) : (
+            <>
+              <p className="text-sm text-slate-500 dark:text-slate-400">Signed in as</p>
+              <p className="font-medium">{user?.email}</p>
+              <Button variant="danger" size="sm" className="mt-3" onClick={handleSignOut}>
+                <LogOut className="h-4 w-4" /> Sign Out
+              </Button>
+            </>
+          )}
         </Card>
 
         <Card>

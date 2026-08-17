@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
-import { supabase } from '../lib/supabase'
+import { supabase, isLocalMode } from '../lib/supabase'
 import { useAuth } from '../contexts/AuthContext'
+import * as localStore from '../lib/localStore'
 
 export function useFamilyTransactions() {
   const { user } = useAuth()
@@ -9,6 +10,12 @@ export function useFamilyTransactions() {
   const [error, setError] = useState(null)
 
   const fetchTransactions = useCallback(async () => {
+    if (isLocalMode) {
+      setTransactions(localStore.loadFamilyTransactions())
+      setLoading(false)
+      return
+    }
+
     if (!user || !supabase) {
       setTransactions([])
       setLoading(false)
@@ -37,6 +44,12 @@ export function useFamilyTransactions() {
   }, [fetchTransactions])
 
   const addTransaction = async (transaction) => {
+    if (isLocalMode) {
+      const data = localStore.createFamilyTransaction(transaction)
+      setTransactions((prev) => [data, ...prev])
+      return data
+    }
+
     const { data, error: insertError } = await supabase
       .from('family_transactions')
       .insert({ ...transaction, user_id: user.id })
@@ -49,6 +62,12 @@ export function useFamilyTransactions() {
   }
 
   const updateTransaction = async (id, updates) => {
+    if (isLocalMode) {
+      const data = localStore.updateFamilyTransaction(id, updates)
+      setTransactions((prev) => prev.map((t) => (t.id === id ? data : t)))
+      return data
+    }
+
     const { data, error: updateError } = await supabase
       .from('family_transactions')
       .update(updates)
@@ -63,6 +82,12 @@ export function useFamilyTransactions() {
   }
 
   const deleteTransaction = async (id) => {
+    if (isLocalMode) {
+      localStore.deleteFamilyTransaction(id)
+      setTransactions((prev) => prev.filter((t) => t.id !== id))
+      return
+    }
+
     const { error: deleteError } = await supabase
       .from('family_transactions')
       .delete()

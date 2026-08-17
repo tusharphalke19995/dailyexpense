@@ -7,6 +7,8 @@ export const isSupabaseConfigured =
   Boolean(supabaseUrl && supabaseAnonKey) &&
   !supabaseUrl.includes('your-project-id')
 
+export const isLocalMode = !isSupabaseConfigured
+
 export const supabase = isSupabaseConfigured
   ? createClient(supabaseUrl, supabaseAnonKey)
   : null

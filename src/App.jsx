@@ -8,7 +8,6 @@ import ExpenseList from './pages/ExpenseList'
 import MonthlySummary from './pages/MonthlySummary'
 import FamilyTracker from './pages/FamilyTracker'
 import Settings from './pages/Settings'
-import { isSupabaseConfigured } from './lib/supabase'
 
 export default function App() {
   return (
@@ -28,10 +27,7 @@ export default function App() {
         <Route path="/family" element={<FamilyTracker />} />
         <Route path="/settings" element={<Settings />} />
       </Route>
-      <Route
-        path="*"
-        element={<Navigate to={isSupabaseConfigured ? '/dashboard' : '/login'} replace />}
-      />
+      <Route path="*" element={<Navigate to="/dashboard" replace />} />
     </Routes>
   )
 }
