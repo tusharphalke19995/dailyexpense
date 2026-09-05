@@ -14,6 +14,13 @@ import {
   Car,
   Heart,
   Users,
+  ChefHat,
+  PiggyBank,
+  Shield,
+  TrendingUp,
+  Landmark,
+  Building2,
+  Banknote,
 } from 'lucide-react'
 
 export const PAYMENT_MODES = [
@@ -50,6 +57,7 @@ export const CATEGORY_GROUPS = {
       { id: 'electricity', name: 'Electricity Bill', icon: Zap },
       { id: 'wifi', name: 'WiFi Bill', icon: Wifi },
       { id: 'vegetables', name: 'Fresh Vegetables', icon: Leaf },
+      { id: 'cook_mavshi', name: 'Cook Mavshi', icon: ChefHat },
       { id: 'home_misc', name: 'Home Miscellaneous', icon: MoreHorizontal },
     ],
   },
@@ -68,6 +76,25 @@ export const CATEGORY_GROUPS = {
       { id: 'money_mom', name: 'Money given to Mom', icon: Heart },
       { id: 'money_dad', name: 'Money given to Dad', icon: Heart },
       { id: 'money_family', name: 'Money given to Family', icon: Users },
+    ],
+  },
+  INVESTMENTS: {
+    label: 'Investments',
+    color: '#06b6d4',
+    categories: [
+      { id: 'ppf', name: 'PPF', icon: PiggyBank },
+      { id: 'lic', name: 'LIC', icon: Shield },
+      { id: 'mutual_funds', name: 'Mutual Funds', icon: TrendingUp },
+      { id: 'nps', name: 'NPS', icon: Landmark },
+    ],
+  },
+  EMI: {
+    label: 'EMI / Loans',
+    color: '#8b5cf6',
+    categories: [
+      { id: 'emi_home', name: 'Home EMI', icon: Building2 },
+      { id: 'emi_car', name: 'Car EMI', icon: Car },
+      { id: 'personal_loan', name: 'Personal Loan', icon: Banknote },
     ],
   },
 }

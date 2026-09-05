@@ -59,12 +59,20 @@ export function getCategoryLabel(categoryId) {
     electricity: 'Electricity Bill',
     wifi: 'WiFi Bill',
     vegetables: 'Fresh Vegetables',
+    cook_mavshi: 'Cook Mavshi',
     home_misc: 'Home Miscellaneous',
     bike_service: 'Bike Servicing',
     car_service: 'Car Servicing',
     money_mom: 'Money given to Mom',
     money_dad: 'Money given to Dad',
     money_family: 'Money given to Family',
+    ppf: 'PPF',
+    lic: 'LIC',
+    mutual_funds: 'Mutual Funds',
+    nps: 'NPS',
+    emi_home: 'Home EMI',
+    emi_car: 'Car EMI',
+    personal_loan: 'Personal Loan',
   }
   return labels[categoryId] || categoryId
 }
